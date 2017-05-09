@@ -14,12 +14,15 @@ using namespace sf;
 enum status {neut,color,delt};
 
 class UNI;
-class graph;
+class Graph;
 
 int retNumber(RenderWindow & window);
 
 Vector2i GetPosition(RenderWindow & window);
 
+void Draw(RenderWindow& window,vector<Graph>&g);
+
+void Line(RenderWindow&window,UNI u,vector<Graph>&g);
 
 class Graph
 {
@@ -42,7 +45,6 @@ public:
 
 };
 
-
 class UNI
 {
 public:
@@ -61,7 +63,5 @@ public:
 
 	bool operator ==(UNI *u);
 };
-
-
 
 #endif INCLUDE_H
