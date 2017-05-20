@@ -11,7 +11,7 @@ Sprite gs;
 Font f;
 Text txt;
 
-void Draw(RenderWindow& window,vector<Graph>&g)
+void Draw(RenderWindow& window,vector<vertex>&g)
 {
 	static bool load=false;
 	if(!load)
@@ -58,7 +58,7 @@ void Draw(RenderWindow& window,vector<Graph>&g)
 }
 
 
-void Line(RenderWindow&window,UNI u,vector<Graph>&g)
+void Line(RenderWindow&window,UNI u,vector<vertex>&g)
 {
 
 	Image img;
@@ -72,7 +72,7 @@ void Line(RenderWindow&window,UNI u,vector<Graph>&g)
 	t.loadFromImage(img);
 	s.setTexture(t);
 
-	Graph one,two;
+	vertex one,two;
 
 	txt.setCharacterSize(15);
 	txt.setColor(c);

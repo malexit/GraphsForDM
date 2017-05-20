@@ -14,17 +14,17 @@ using namespace sf;
 enum status {neut,color,delt};
 
 class UNI;
-class Graph;
+class vertex;
 
 int retNumber(RenderWindow & window);
 
 Vector2i GetPosition(RenderWindow & window);
 
-void Draw(RenderWindow& window,vector<Graph>&g);
+void Draw(RenderWindow& window,vector<vertex>&g);
 
-void Line(RenderWindow&window,UNI u,vector<Graph>&g);
+void Line(RenderWindow&window,UNI u,vector<vertex>&g);
 
-class Graph
+class vertex
 {
 public:
 	
@@ -33,15 +33,15 @@ public:
 	int num;
 	int x,y;
 
-	Graph(void);
+	vertex(void);
 
 	void Init();
 
-	Graph(const Graph&);
+	vertex(const vertex&);
 
-	~Graph(void);
+	~vertex(void);
 
-	void createUni(Graph & g,int wgt);
+	void createUni(vertex & g,int wgt);
 
 };
 

@@ -7,13 +7,12 @@
 using namespace std;
 using namespace sf;
 
-void Prim(vector<Graph>&g,RenderWindow&window);
-void keyboard(RenderWindow&window,vector<Graph>&g);
+void keyboard(RenderWindow&window,vector<vertex>&g);
 void Sleep(int s);
 
 int main()
 {
-	vector<Graph> g;
+	vector<vertex> v;
 
 	RenderWindow window(VideoMode(1280,720),"Graphs",Style::Fullscreen);
 
@@ -29,9 +28,9 @@ int main()
 		}
 		window.clear(Color::White);
 		
-		keyboard(window,g);
+		keyboard(window,v);
 		
-		Draw(window,g);
+		Draw(window,v);
 		
 		window.display();
 
@@ -40,66 +39,12 @@ int main()
 	return 0;
 }
 
-Graph& getGraph(vector<Graph>&g,int num)
+vertex& getVertex(vector<vertex>&v,int num)
 {
-	for(int i=0;i<g.size();i++)
-		if(num==g[i].num)return g[i];
-	Graph gg;
-	return gg;
-}
-
-void Prim(vector<Graph>&g,RenderWindow&window)
-{
-	vector<UNI*>t;
-	t.resize(g[0].uni.size());
-
-	for(int i=0;i<t.size();i++)
-		t[i]=g[0].uni[i];
-	UNI *u;
-	for(int i=0;i<g.size()-1;i++)
-	{
-		int min=0;
-		for(int j=0;j<t.size();j++)
-			if(min<t[j]->wgt)min=t[j]->wgt;
-		for(int j=0;j<t.size();j++)
-			if(t[j]->wgt<=min&&t[j]->sts==neut&&(getGraph(g,t[j]->one).sts==neut||getGraph(g,t[j]->two).sts==neut)){min=t[j]->wgt;u=t[j];}
-
-			getGraph(g,u->one).sts=color;
-			getGraph(g,u->two).sts=color;
-			u->sts=color;
-
-			
-			for(int j=0;j<getGraph(g,u->one).uni.size();j++)
-				if(getGraph(g,u->one).uni[j]->sts!=color)
-				{
-					for(int k=0;k<t.size();k++)
-						if(getGraph(g,u->one).uni[j]==t[k])break;
-						else if(k==t.size()-1)
-						{
-							t.resize(t.size()+1);
-							t[t.size()-1]=getGraph(g,u->one).uni[j];
-							break;
-						}
-				}
-
-			for(int j=0;j<getGraph(g,u->two).uni.size();j++)
-				if(getGraph(g,u->two).uni[j]->sts!=color)
-				{
-					for(int k=0;k<t.size();k++)
-						if(getGraph(g,u->two).uni[j]==t[k])break;
-						else if(k==t.size()-1)
-						{
-							t.resize(t.size()+1);
-							t[t.size()-1]=getGraph(g,u->two).uni[j];
-							break;
-						}
-				}
-				window.clear(Color::White);
-
-				Draw(window,g);
-				Sleep(7);
-				window.display();
-	}
+	for(int i=0;i<v.size();i++)
+		if(num==v[i].num)return v[i];
+	vertex vv;
+	return vv;
 }
 
 void Sleep(int s)
@@ -113,7 +58,7 @@ void Sleep(int s)
 	}
 }
 
-void keyboard(RenderWindow&window,vector<Graph>&g)
+void keyboard(RenderWindow&window,vector<vertex>&g)
 {
 	if(Mouse::isButtonPressed(Mouse::Left))
 		{
@@ -182,11 +127,5 @@ void keyboard(RenderWindow&window,vector<Graph>&g)
 		
 		}
 
-
-		if(Keyboard::isKeyPressed(Keyboard::P))
-		{
-			Prim(g,window);
-			while(Keyboard::isKeyPressed(Keyboard::P));
-		}
 }
 
