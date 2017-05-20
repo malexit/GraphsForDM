@@ -83,7 +83,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Draw.cpp" />
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="Graphs.cpp" />
     <ClCompile Include="stdafx.cpp">

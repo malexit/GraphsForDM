@@ -7,15 +7,31 @@
 using namespace std;
 using namespace sf;
 
-void Prim(vector<Graph>&g,RenderWindow&window);
+void Line(RenderWindow&window,UNI u,vector<Graph>&g);
+void Prim(vector<Graph>&g);
 void keyboard(RenderWindow&window,vector<Graph>&g);
-void Sleep(int s);
 
 int main()
 {
 	vector<Graph> g;
 
 	RenderWindow window(VideoMode(1280,720),"Graphs",Style::Fullscreen);
+
+	Image gi;
+	gi.loadFromFile("graph.png");
+	gi.createMaskFromColor(Color::White);
+	Texture gt;
+	gt.loadFromImage(gi);
+	Sprite gs;
+	gs.setTexture(gt);
+	gs.setOrigin(35,35);
+
+
+	Font f;
+	f.loadFromFile("Old.ttf");
+	Text txt;
+	txt.setFont(f);
+	txt.setCharacterSize(15);
 
 	while(window.isOpen())
 	{
@@ -31,24 +47,114 @@ int main()
 		
 		keyboard(window,g);
 		
-		Draw(window,g);
+		for(int i=0;i<g.size();i++)
+		{
+			for(int j=0;j<g[i].uni.size();j++)
+			{
+				if((i+1)<g[i].uni[j]->two||(i+1)<g[i].uni[j]->one)
+				Line(window,*g[i].uni[j],g);
+			}
+		}
+
+		for(int i=0;i<g.size();i++)
+		{
+
+			char*str=new char[5];
+
+			itoa(g[i].num,str,10);
+
+			txt.setString(str);
+			delete[]str;
+
+			txt.setPosition(g[i].x,g[i].y);
+
+			if(g[i].sts==neut)txt.setColor(Color::Black);
+				else if(g[i].sts==color)txt.setColor(Color::Red);
+				else txt.setColor(Color::Yellow);
+			gs.setPosition(g[i].x,g[i].y);
+			window.draw(gs);
+			window.draw(txt);
+		}
+
 		
+
 		window.display();
 
 	}
 
 	return 0;
 }
+Font f;
+void Line(RenderWindow&window,UNI u,vector<Graph>&g)
+{
+	static bool load=true;
+	Image img;
+	Color c;
+	if(u.sts==neut)c=Color::Black;
+	else if(u.sts==color)c=Color::Red;
+	else c=Color::Yellow;
+	img.create(1,1,c);
+	Texture t;
+	Sprite s;
+	t.loadFromImage(img);
+	s.setTexture(t);
+
+	Graph one,two;
+
+	
+	if(load){f.loadFromFile("Old.ttf");load=false;}
+	Text txt;
+	txt.setFont(f);
+	txt.setCharacterSize(15);
+	txt.setColor(c);
+
+	char*str=new char[5];
+
+	itoa(u.wgt,str,10);
+
+	txt.setString(str);
+	delete[]str;
+
+	for(int i=0;i<g.size();i++)
+		if((i+1)==u.one)one=g[i];
+		else if((i+1)==u.two)two=g[i];
+
+	int xb,xs,y,b;
+	int sx,sy;
+
+	sx=(one.x+two.x)/2;
+	sy=(one.y+two.y)/2;
+
+	float k;
+
+	k=(1.0*(one.y-two.y))/(one.x-two.x);
+
+	if(one.x>=two.x){xb=one.x;xs=two.x;}
+	else {xb=two.x;xs=one.x;}
+
+	b=one.y-k*one.x;
+	int j;
+	for(float i=xs;i<xb;i+=0.1)
+	{
+		j=k*i+b;
+		s.setPosition(i,j);
+		window.draw(s);
+	} 
+
+	txt.setPosition(sx,sy);
+	window.draw(txt);
+}
 
 Graph& getGraph(vector<Graph>&g,int num)
 {
+	
 	for(int i=0;i<g.size();i++)
 		if(num==g[i].num)return g[i];
 	Graph gg;
 	return gg;
 }
 
-void Prim(vector<Graph>&g,RenderWindow&window)
+void Prim(vector<Graph>&g)
 {
 	vector<UNI*>t;
 	t.resize(g[0].uni.size());
@@ -94,24 +200,11 @@ void Prim(vector<Graph>&g,RenderWindow&window)
 							break;
 						}
 				}
-				window.clear(Color::White);
 
-				Draw(window,g);
-				Sleep(7);
-				window.display();
+				
 	}
 }
 
-void Sleep(int s)
-{
-	Clock clock;
-	float time=0;
-	while(time<s)
-	{
-		system("CLS");
-		time+=clock.getElapsedTime().asSeconds();
-	}
-}
 
 void keyboard(RenderWindow&window,vector<Graph>&g)
 {
@@ -185,7 +278,7 @@ void keyboard(RenderWindow&window,vector<Graph>&g)
 
 		if(Keyboard::isKeyPressed(Keyboard::P))
 		{
-			Prim(g,window);
+			Prim(g);
 			while(Keyboard::isKeyPressed(Keyboard::P));
 		}
 }
