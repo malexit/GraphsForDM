@@ -15,32 +15,24 @@ void vertex::Init()
 	sts=neut;
 }
 
-vertex::vertex(const vertex&v)
-{
-	num=v.num;
-	sts=v.sts;
-	uni.resize(v.uni.size());
-
-	for(int i=0;i<uni.size();i++)
-		uni[i]=v.uni[i];
-	x=v.x;
-	y=v.y;
-}
-
 vertex::~vertex(void)
 {
 }
 
+bool vertex::operator !=(vertex v)
+{
+	if(num!=v.num)return true;
+}
+
 void  vertex::createUni(vertex&v,int wgt)
 {
-	uni.resize(uni.size()+1);
-	uni[uni.size()-1]=new UNI;
-	uni[uni.size()-1]->one=num;
-	uni[uni.size()-1]->two=v.num;
-	uni[uni.size()-1]->sts=neut;
-	uni[uni.size()-1]->wgt=wgt;
-	v.uni.resize(v.uni.size()+1);
-	v.uni[v.uni.size()-1]=uni[uni.size()-1];
+	uni.resize(uni.size+1);
+	uni[uni.size-1].wgt=wgt;
+	uni[uni.size-1].sts=neut;
+	uni[uni.size-1].one=this;
+	uni[uni.size-1].two=&v;
+	v.uni.resize(v.uni.size+1);
+	v.uni[v.uni.size-1]=uni[uni.size-1];
 }
 
 Vector2i GetPosition(RenderWindow & window)
