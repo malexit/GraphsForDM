@@ -2,12 +2,12 @@
 #include "include.h"
 
 
-Graph::Graph(void)
+vertex::vertex(void)
 {
 
 }
 
-void Graph::Init()
+void vertex::Init()
 {
 	static int cnt=1;
 	num=cnt;
@@ -15,32 +15,24 @@ void Graph::Init()
 	sts=neut;
 }
 
-Graph::Graph(const Graph&g)
-{
-	num=g.num;
-	sts=g.sts;
-	uni.resize(g.uni.size());
-
-	for(int i=0;i<uni.size();i++)
-		uni[i]=g.uni[i];
-	x=g.x;
-	y=g.y;
-}
-
-Graph::~Graph(void)
+vertex::~vertex(void)
 {
 }
 
-void  Graph::createUni(Graph&g,int wgt)
+bool vertex::operator !=(vertex v)
 {
-	uni.resize(uni.size()+1);
-	uni[uni.size()-1]=new UNI;
-	uni[uni.size()-1]->one=num;
-	uni[uni.size()-1]->two=g.num;
-	uni[uni.size()-1]->sts=neut;
-	uni[uni.size()-1]->wgt=wgt;
-	g.uni.resize(g.uni.size()+1);
-	g.uni[g.uni.size()-1]=uni[uni.size()-1];
+	if(num!=v.num)return true;
+}
+
+void  vertex::createUni(vertex&v,int wgt)
+{
+	uni.resize(uni.size+1);
+	uni[uni.size-1].wgt=wgt;
+	uni[uni.size-1].sts=neut;
+	uni[uni.size-1].one=this;
+	uni[uni.size-1].two=&v;
+	v.uni.resize(v.uni.size+1);
+	v.uni[v.uni.size-1]=uni[uni.size-1];
 }
 
 Vector2i GetPosition(RenderWindow & window)

@@ -11,7 +11,7 @@ Sprite gs;
 Font f;
 Text txt;
 
-void Draw(RenderWindow& window,vector<Graph>&g)
+void Draw(RenderWindow& window,List<vertex>&g)
 {
 	static bool load=false;
 	if(!load)
@@ -27,16 +27,13 @@ void Draw(RenderWindow& window,vector<Graph>&g)
 	txt.setCharacterSize(15);
 
 
-	for(int i=0;i<g.size();i++)
-		{
-			for(int j=0;j<g[i].uni.size();j++)
-			{
-				if((i+1)<g[i].uni[j]->two||(i+1)<g[i].uni[j]->one)
-				Line(window,*g[i].uni[j],g);
-			}
-		}
+	for(int i=0;i<g.size;i++)
+	{
+		for(int j=0;j<g[i].uni.size;j++)
+		Line(window,g[i].uni[j],g);
+	}
 
-		for(int i=0;i<g.size();i++)
+		for(int i=0;i<g.size;i++)
 		{
 
 			char*str=new char[5];
@@ -58,7 +55,7 @@ void Draw(RenderWindow& window,vector<Graph>&g)
 }
 
 
-void Line(RenderWindow&window,UNI u,vector<Graph>&g)
+void Line(RenderWindow&window,UNI u,List<vertex>&g)
 {
 
 	Image img;
@@ -72,7 +69,7 @@ void Line(RenderWindow&window,UNI u,vector<Graph>&g)
 	t.loadFromImage(img);
 	s.setTexture(t);
 
-	Graph one,two;
+	vertex one,two;
 
 	txt.setCharacterSize(15);
 	txt.setColor(c);
@@ -84,9 +81,9 @@ void Line(RenderWindow&window,UNI u,vector<Graph>&g)
 	txt.setString(str);
 	delete[]str;
 
-	for(int i=0;i<g.size();i++)
-		if((i+1)==u.one)one=g[i];
-		else if((i+1)==u.two)two=g[i];
+	for(int i=0;i<g.size;i++)
+		if((i+1)==u.one->num)one=g[i];
+		else if((i+1)==u.two->num)two=g[i];
 
 	int xb,xs,y,b;
 	int sx,sy;

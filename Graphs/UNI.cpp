@@ -7,18 +7,9 @@ UNI::UNI(void)
 	sts=neut;
 }
 
-UNI::UNI(const UNI& u)
-{
-	one=u.one;
-	two=u.two;
-	sts=u.sts;
-	wgt=u.wgt;
-}
-
 
 UNI::~UNI(void)
 {
-
 }
 
 int retNumber(RenderWindow & window)
@@ -112,10 +103,10 @@ void UNI::operator =(UNI *u)
 	wgt=u->wgt;
 }
 
-bool UNI::operator ==(UNI *u)
+bool UNI::operator ==(UNI u)
 {
-	if(one!=u->one)return false;
-	if(two!=u->two)return false;
+	if(one!=u.one)return false;
+	if(two!=u.two)return false;
 
 	return true;
 }

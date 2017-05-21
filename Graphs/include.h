@@ -14,54 +14,97 @@ using namespace sf;
 enum status {neut,color,delt};
 
 class UNI;
-class Graph;
+class vertex;
+template <class T>
+class List;
 
 int retNumber(RenderWindow & window);
 
 Vector2i GetPosition(RenderWindow & window);
 
-void Draw(RenderWindow& window,vector<Graph>&g);
+void Draw(RenderWindow& window,List<vertex>&g);
 
-void Line(RenderWindow&window,UNI u,vector<Graph>&g);
+void Line(RenderWindow&window,UNI u,List<vertex>&g);
 
-class Graph
+template <class T>
+class List
+{
+public:
+	T **v;
+	int size;
+
+	List()
+	{
+		size=0;
+		v=new T*[size];
+	}
+
+	void resize(int nsize)
+	{
+		if(nsize<0) return;
+
+        T **nstr=new T*[nsize];
+
+        if(nsize<size) size=nsize;
+		else nstr[nsize-1]=new T;
+
+        if(size!=0)
+        for(int i=0;i<size;i++)
+            nstr[i]=v[i];
+
+        delete [] v;
+
+        v=nstr;
+
+        size=nsize;
+    }
+
+	T& operator [](int n)
+	{
+		return *v[n];
+	}
+
+};
+
+
+class vertex
 {
 public:
 	
 	status sts;
-	vector<UNI*>uni;
+	List<UNI>uni;
 	int num;
 	int x,y;
 
-	Graph(void);
+	vertex(void);
 
 	void Init();
 
-	Graph(const Graph&);
+	~vertex(void);
 
-	~Graph(void);
+	void createUni(vertex & v,int wgt);
 
-	void createUni(Graph & g,int wgt);
+	bool operator !=(vertex v);
 
 };
 
 class UNI
 {
 public:
-	int one;
-	int two;
+	vertex *one;
+	vertex *two;
 	int wgt;
 	status sts;
 
 	UNI(void);
 
-	UNI(const UNI&);
-
 	~UNI(void);
 
 	void operator =(UNI *u);
 
-	bool operator ==(UNI *u);
+	bool operator ==(UNI u);
 };
+
+
 
 #endif INCLUDE_H

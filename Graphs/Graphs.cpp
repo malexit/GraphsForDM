@@ -7,13 +7,12 @@
 using namespace std;
 using namespace sf;
 
-void Prim(vector<Graph>&g,RenderWindow&window);
-void keyboard(RenderWindow&window,vector<Graph>&g);
+void keyboard(RenderWindow&window,List<vertex>&g);
 void Sleep(int s);
 
 int main()
 {
-	vector<Graph> g;
+	List<vertex> v;
 
 	RenderWindow window(VideoMode(1280,720),"Graphs",Style::Fullscreen);
 
@@ -29,77 +28,15 @@ int main()
 		}
 		window.clear(Color::White);
 		
-		keyboard(window,g);
+		keyboard(window,v);
 		
-		Draw(window,g);
+		Draw(window,v);
 		
 		window.display();
 
 	}
 
 	return 0;
-}
-
-Graph& getGraph(vector<Graph>&g,int num)
-{
-	for(int i=0;i<g.size();i++)
-		if(num==g[i].num)return g[i];
-	Graph gg;
-	return gg;
-}
-
-void Prim(vector<Graph>&g,RenderWindow&window)
-{
-	vector<UNI*>t;
-	t.resize(g[0].uni.size());
-
-	for(int i=0;i<t.size();i++)
-		t[i]=g[0].uni[i];
-	UNI *u;
-	for(int i=0;i<g.size()-1;i++)
-	{
-		int min=0;
-		for(int j=0;j<t.size();j++)
-			if(min<t[j]->wgt)min=t[j]->wgt;
-		for(int j=0;j<t.size();j++)
-			if(t[j]->wgt<=min&&t[j]->sts==neut&&(getGraph(g,t[j]->one).sts==neut||getGraph(g,t[j]->two).sts==neut)){min=t[j]->wgt;u=t[j];}
-
-			getGraph(g,u->one).sts=color;
-			getGraph(g,u->two).sts=color;
-			u->sts=color;
-
-			
-			for(int j=0;j<getGraph(g,u->one).uni.size();j++)
-				if(getGraph(g,u->one).uni[j]->sts!=color)
-				{
-					for(int k=0;k<t.size();k++)
-						if(getGraph(g,u->one).uni[j]==t[k])break;
-						else if(k==t.size()-1)
-						{
-							t.resize(t.size()+1);
-							t[t.size()-1]=getGraph(g,u->one).uni[j];
-							break;
-						}
-				}
-
-			for(int j=0;j<getGraph(g,u->two).uni.size();j++)
-				if(getGraph(g,u->two).uni[j]->sts!=color)
-				{
-					for(int k=0;k<t.size();k++)
-						if(getGraph(g,u->two).uni[j]==t[k])break;
-						else if(k==t.size()-1)
-						{
-							t.resize(t.size()+1);
-							t[t.size()-1]=getGraph(g,u->two).uni[j];
-							break;
-						}
-				}
-				window.clear(Color::White);
-
-				Draw(window,g);
-				Sleep(7);
-				window.display();
-	}
 }
 
 void Sleep(int s)
@@ -113,24 +50,24 @@ void Sleep(int s)
 	}
 }
 
-void keyboard(RenderWindow&window,vector<Graph>&g)
+void keyboard(RenderWindow&window,List<vertex>&g)
 {
 	if(Mouse::isButtonPressed(Mouse::Left))
 		{
 			Vector2i pos=GetPosition(window);
 
 			if(!Keyboard::isKeyPressed(Keyboard::LShift)&&!Keyboard::isKeyPressed(Keyboard::LControl))
-				for(int i=0;i<g.size();i++)
+				for(int i=0;i<g.size;i++)
 					if(FloatRect(pos.x,pos.y,1,1).intersects(FloatRect(g[i].x-35,g[i].y-35,70,70)))
 						while(true)
 						{
-							Vector2i pos=GetPosition(window);
+							 pos=GetPosition(window);
 
 							if(!Mouse::isButtonPressed(Mouse::Left))
 							{
 								g[i].x=pos.x;
 								g[i].y=pos.y;
-								break;
+								return;
 							}
 
 						}
@@ -140,23 +77,23 @@ void keyboard(RenderWindow&window,vector<Graph>&g)
 		{
 			while(true)
 			{
-				if(!Keyboard::isKeyPressed(Keyboard::LShift))break;
+				if(!Keyboard::isKeyPressed(Keyboard::LShift))return;
 				else if(!Mouse::isButtonPressed(Mouse::Left))
 				{
 					pos=GetPosition(window);
 
-					g.resize(g.size()+1);
-					g[g.size()-1].Init();
-					g[g.size()-1].x=pos.x;
-					g[g.size()-1].y=pos.y;
-					break;
+					g.resize(g.size+1);
+					g[g.size-1].Init();
+					g[g.size-1].x=pos.x;
+					g[g.size-1].y=pos.y;
+					return;
 				}
 			}
 			
 		}
 
 		if(Keyboard::isKeyPressed(Keyboard::LControl))	
-				for(int i=0;i<g.size();i++)
+				for(int i=0;i<g.size;i++)
 					if(FloatRect(pos.x,pos.y,1,1).intersects(FloatRect(g[i].x-35,g[i].y-35,70,70)))
 					{
 						int wgt=0;
@@ -168,7 +105,7 @@ void keyboard(RenderWindow&window,vector<Graph>&g)
 							{
 								pos=GetPosition(window);
 
-								for(int j=0;j<g.size();j++)
+								for(int j=0;j<g.size;j++)
 									if(FloatRect(pos.x,pos.y,1,1).intersects(FloatRect(g[j].x-35,g[j].y-35,70,70)))
 										if(i!=j){wgt=retNumber(window);g[i].createUni(g[j],wgt);break;}
 										else break;
@@ -182,11 +119,5 @@ void keyboard(RenderWindow&window,vector<Graph>&g)
 		
 		}
 
-
-		if(Keyboard::isKeyPressed(Keyboard::P))
-		{
-			Prim(g,window);
-			while(Keyboard::isKeyPressed(Keyboard::P));
-		}
 }
 
