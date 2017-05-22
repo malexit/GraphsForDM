@@ -13,6 +13,7 @@ void vertex::Init()
 	num=cnt;
 	cnt++;
 	sts=neut;
+	num_l=999;
 }
 
 vertex::~vertex(void)

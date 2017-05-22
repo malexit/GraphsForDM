@@ -13,6 +13,8 @@ using namespace sf;
 
 enum status {neut,color,delt};
 
+
+
 class UNI;
 class vertex;
 template <class T>
@@ -74,7 +76,9 @@ public:
 	status sts;
 	List<UNI>uni;
 	int num;
+	int num_l;
 	int x,y;
+	
 
 	vertex(void);
 

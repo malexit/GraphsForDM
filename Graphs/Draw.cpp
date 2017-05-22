@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "include.h"
 
-
 using namespace std;
 using namespace sf;
 

@@ -86,6 +86,7 @@ int retNumber(RenderWindow & window)
 		window.draw(txt);
 		window.display();
 	}
+	while(Keyboard::isKeyPressed(Keyboard::Return));
 	int res=0;
 
 	res=atoi(str.c_str());
