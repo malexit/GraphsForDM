@@ -38,7 +38,7 @@ void  vertex::createUni(vertex&v,int wgt)
 
 Vector2i GetPosition(RenderWindow & window)
 {
-	static bool full=true;
+	static bool full=false;
 	Vector2i pos;
 	pos=Mouse::getPosition();
 	if(full)pos.x-=window.getPosition().x;

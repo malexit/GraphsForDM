@@ -5,6 +5,7 @@
 UNI::UNI(void)
 {
 	sts=neut;
+	nas=0;
 }
 
 

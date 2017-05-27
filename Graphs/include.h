@@ -98,6 +98,7 @@ public:
 	vertex *one;
 	vertex *two;
 	int wgt;
+	int nas;
 	status sts;
 
 	UNI(void);

@@ -44,9 +44,8 @@ void Draw(RenderWindow& window,List<vertex>&g)
 
 			txt.setPosition(g[i].x,g[i].y);
 
-			if(g[i].sts==neut)txt.setColor(Color::Black);
-				else if(g[i].sts==color)txt.setColor(Color::Red);
-				else txt.setColor(Color::Yellow);
+			txt.setColor(Color::Black);
+
 			gs.setPosition(g[i].x,g[i].y);
 			window.draw(gs);
 			window.draw(txt);
@@ -59,7 +58,7 @@ void Line(RenderWindow&window,UNI u,List<vertex>&g)
 
 	Image img;
 	Color c;
-	if(u.sts==neut)c=Color::Black;
+	if(u.sts==neut)c=Color(50,200,20);
 	else if(u.sts==color)c=Color::Red;
 	else c=Color::Yellow;
 	img.create(1,1,c);
@@ -73,19 +72,26 @@ void Line(RenderWindow&window,UNI u,List<vertex>&g)
 	txt.setCharacterSize(15);
 	txt.setColor(c);
 
+	string sstr;
 	char*str=new char[5];
 
 	itoa(u.wgt,str,10);
-
-	txt.setString(str);
+	sstr+=str;
+	sstr+="(";
+	itoa(u.nas,str,10);
+	sstr+=str;
+	sstr+=")";
+	txt.setString(sstr);
 	delete[]str;
 
 	for(int i=0;i<g.size;i++)
 		if((i+1)==u.one->num)one=g[i];
 		else if((i+1)==u.two->num)two=g[i];
 
-	int xb,xs,y,b;
+	int xb,xs,y,b,ys,yb;
 	int sx,sy;
+
+	bool xso,yso;
 
 	sx=(one.x+two.x)/2;
 	sy=(one.y+two.y)/2;
@@ -94,15 +100,85 @@ void Line(RenderWindow&window,UNI u,List<vertex>&g)
 
 	k=(1.0*(one.y-two.y))/(one.x-two.x);
 
-	if(one.x>=two.x){xb=one.x;xs=two.x;}
-	else {xb=two.x;xs=one.x;}
+	if(one.x>=two.x){xb=one.x;xs=two.x;xso=false;}
+	else {xb=two.x;xs=one.x;xso=true;}
+
+	if(one.y>=two.y){yb=one.y;ys=two.y;yso=false;}
+	else {yb=two.y;ys=one.y;yso=true;}
 
 	b=one.y-k*one.x;
 	int j;
-	for(float i=xs;i<xb;i+=0.1)
+
+	bool color=false;
+
+	if(xso)img.setPixel(0,0,Color::Black);
+	else img.setPixel(0,0,Color::Red);
+	t.loadFromImage(img);
+	s.setTexture(t);
+
+	for(float i=xs;i<xb;i+=1)
 	{
 		j=k*i+b;
 		s.setPosition(i,j);
+
+		if(!color)
+		{
+			if(xso==true)
+			{
+				if((i-xs)/((xb-xs)*1.0)>=0.85)
+				{
+				img.setPixel(0,0,Color::Red);
+				t.loadFromImage(img);
+				s.setTexture(t);
+				color=true;
+				}
+			}
+			else if((i-xs)/((xb-xs)*1.0)>=0.15)
+			{
+				img.setPixel(0,0,Color::Black);
+				t.loadFromImage(img);
+				s.setTexture(t);
+				color=true;
+			}
+		}
+
+
+		window.draw(s);
+	} 
+
+	if(yso)img.setPixel(0,0,Color::Black);
+	else img.setPixel(0,0,Color::Red);
+	t.loadFromImage(img);
+	s.setTexture(t);
+	color=false;
+
+	j;
+	for(float i=ys;i<yb;i+=1)
+	{
+		j=(i-b)/(k*1.0);
+		s.setPosition(j,i);
+
+		if(!color)
+		{
+			if(yso==true)
+			{
+				if((i-ys)/((yb-ys)*1.0)>=0.85)
+				{
+				img.setPixel(0,0,Color::Red);
+				t.loadFromImage(img);
+				s.setTexture(t);
+				color=true;
+				}
+			}
+			else if((i-ys)/((yb-ys)*1.0)>=0.15)
+			{
+				img.setPixel(0,0,Color::Black);
+				t.loadFromImage(img);
+				s.setTexture(t);
+				color=true;
+			}
+		}
+
 		window.draw(s);
 	} 
 

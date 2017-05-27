@@ -10,12 +10,14 @@ using namespace sf;
 void keyboard(RenderWindow&window,List<vertex>&g);
 void Sleep(int s);
 void Deykstr(List<vertex>&v,RenderWindow&window);
+void Ford_Fulkerson(List<vertex>&v,RenderWindow&window);
 
 int main()
 {
+	setlocale(LC_ALL,"");
 	List<vertex> v;
 
-	RenderWindow window(VideoMode(1280,720),"Graphs",Style::Fullscreen);
+	RenderWindow window(VideoMode(1000,562),"Graphs");
 
 	while(window.isOpen())
 	{
@@ -126,16 +128,24 @@ void keyboard(RenderWindow&window,List<vertex>&g)
 		while(Keyboard::isKeyPressed(Keyboard::D));
 	}
 
+	if(Keyboard::isKeyPressed(Keyboard::A))
+	{
+		Ford_Fulkerson(g,window);
+		while(Keyboard::isKeyPressed(Keyboard::A));
+	}
+	
+
 }
 
 
 
 void Deykstr(List<vertex>&v,RenderWindow&window)
 {
+	if(v.size<2)return;
 	int start=retNumber(window);
 	int end=retNumber(window);
 
-v[start-1].num_l=0;
+	v[start-1].num_l=0;
 
 	vertex *W;
 	vector<int>P;
@@ -157,15 +167,20 @@ v[start-1].num_l=0;
 					else{ W->uni[i].one->num_l=W->num_l+W->uni[i].wgt;P[W->uni[i].one->num-1]=W->num;}
 					W->sts=color;
 
-
-					
 					Draw(window,v);
-
 	}
+	int sum=0;
 	int res=end-1;
 	cout<<res+1<<"->";
 	while(true)
 	{
+		
+		for(int i=0;i<v[res].uni.size;i++)
+			if(v[res].uni[i].one->num==P[res]||v[res].uni[i].two->num==P[res])
+				{
+					v[res].uni[i].sts=color;
+					sum+=v[res].uni[i].wgt;
+				}
 		
 		res=P[res]-1;
 		cout<<res+1;
@@ -173,6 +188,67 @@ v[start-1].num_l=0;
 		cout<<"->";
 	}
 	cout<<endl;
+	cout<<"Минимальный вес пути:"<<sum<<endl;
 	cout<<endl;
 }
 
+void Ford_Fulkerson(List<vertex>&v,RenderWindow&window)
+{
+	int start=retNumber(window);
+	int finish=retNumber(window);
+
+	List<UNI*> stack;
+
+	bool isDelete;
+	while(true)
+	{
+		isDelete=false;
+
+		vertex*W=&v[start-1];
+		
+		while(true)
+		{
+			for(int i=0;i<W->uni.size;i++)
+				if(W->uni[i].two->num!=W->num&&W->uni[i].two->sts!=color&&W->uni[i].nas!=W->uni[i].wgt&&W->uni[i].two->sts!=delt)
+				{	
+							stack.resize(stack.size+1);
+							stack[stack.size-1]=&W->uni[i];
+							W->sts=color;
+							W=W->uni[i].two;
+							break;
+				}
+				else if(i==W->uni.size-1)
+					{
+						if(W->sts!=delt){W->sts=delt;isDelete=true;break;}
+						else return;
+					}
+				if(isDelete)break;
+				if(W->num==finish)break;
+		}
+		if(isDelete)continue;
+
+		int min=9999;
+
+		for(int m=0;m<stack.size;m++)
+			if(min>=(stack[m]->wgt-stack[m]->nas))
+				min=stack[m]->wgt-stack[m]->nas;
+
+
+		for(int m=0;m<stack.size;m++)
+		{
+			for(int i=0;i<v.size;i++)
+				for(int j=0;j<v[i].uni.size;j++)
+					if(*stack[m]==v[i].uni[j])
+						v[i].uni[j].nas+=min;
+
+		}
+		
+		for(int i=0;i<v.size;i++)
+			if(v[i].sts==color)v[i].sts=neut;
+
+		stack.resize(0);
+		//Draw(window,v);
+
+	}
+
+}
