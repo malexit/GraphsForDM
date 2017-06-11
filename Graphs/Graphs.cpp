@@ -10,7 +10,7 @@ using namespace sf;
 void keyboard(RenderWindow&window,List<vertex>&g);
 void Sleep(int s);
 void Deykstr(List<vertex>&v,RenderWindow&window);
-void Ford_Fulkerson(List<vertex>&v,RenderWindow&window);
+int Ford_Fulkerson(List<vertex>&v,RenderWindow&window);
 
 int main()
 {
@@ -130,7 +130,7 @@ void keyboard(RenderWindow&window,List<vertex>&g)
 
 	if(Keyboard::isKeyPressed(Keyboard::A))
 	{
-		Ford_Fulkerson(g,window);
+		cout<<"Максимальный потом"<<Ford_Fulkerson(g,window)<<endl;
 		while(Keyboard::isKeyPressed(Keyboard::A));
 	}
 	
@@ -192,57 +192,104 @@ void Deykstr(List<vertex>&v,RenderWindow&window)
 	cout<<endl;
 }
 
-void Ford_Fulkerson(List<vertex>&v,RenderWindow&window)
+/*int Ford_Fulkerson(List<vertex>&v,RenderWindow&window)
 {
 	int start=retNumber(window);
 	int finish=retNumber(window);
 
 	List<UNI*> stack;
 
-	bool isDelete;
 	while(true)
 	{
-		isDelete=false;
-
 		vertex*W=&v[start-1];
 		
+		//Создем стек
 		while(true)
 		{
 			for(int i=0;i<W->uni.size;i++)
-				if(W->uni[i].two->num!=W->num&&W->uni[i].two->sts!=color&&W->uni[i].nas!=W->uni[i].wgt&&W->uni[i].two->sts!=delt)
+				if((W->uni[i].two->sts!=color&&W->uni[i].one->sts!=color)&&W->uni[i].nas!=W->uni[i].wgt&&(W->uni[i].sts!=delt||W->uni[i].one->num==W->num))
 				{	
 							stack.resize(stack.size+1);
 							stack[stack.size-1]=&W->uni[i];
 							W->sts=color;
-							W=W->uni[i].two;
+							if(W->num!=W->uni[i].two->num)W=W->uni[i].two;
+							else W=W->uni[i].one;
 							break;
 				}
 				else if(i==W->uni.size-1)
 					{
-						if(W->sts!=delt){W->sts=delt;isDelete=true;break;}
-						else return;
+						if(stack.size==0)
+						{
+							int result=0;
+							for(int k=0;k<v[start-1].uni.size;k++)
+								result+=v[start-1].uni[k].nas;
+							return result;
+						}
+						else 
+						{
+							cout<<W->num<<"->>";
+							W->sts=color;
+							if(W->num==stack[stack.size-1]->one->num)W=stack[stack.size-1]->two;
+							else W=stack[stack.size-1]->one;
+							W->sts=neut;
+							cout<<W->num<<endl;
+							stack.resize(stack.size-1);
+						}
 					}
-				if(isDelete)break;
 				if(W->num==finish)break;
 		}
-		if(isDelete)continue;
+		//Просчитываем максимальный поток в этой цепи
+		int min=0;
 
-		int min=9999;
+		for(int i=0;i<stack.size;i++)
+			cout<<stack[i]->one->num<<"-";
+		cout<<finish<<endl;
+		
+		if(stack[0]->one->num==v[start-1].num)
+		{
+			min=stack[0]->wgt-stack[0]->nas;
+		}
+		else 
+			if(stack[0]->nas-min<0)min=stack[0]->nas;
 
-		for(int m=0;m<stack.size;m++)
+		for(int m=1;m<stack.size;m++)
+		{
+			
+			if(stack[m]->two->num!=stack[m-1]->two->num)
+			{
 			if(min>=(stack[m]->wgt-stack[m]->nas))
 				min=stack[m]->wgt-stack[m]->nas;
+			}
+			else if(stack[m]->nas-min<0) min=stack[m]->nas;
+			if(min==0)
+			{
+				for(int i=0;i<v.size;i++)
+					for(int j=0;j<v[i].uni.size;j++)
+						if(*stack[m]==v[i].uni[j])v[i].uni[j].sts=delt;
+				break;
+			}
+		}
+
+		cout<<min<<endl<<endl;
 
 
-		for(int m=0;m<stack.size;m++)
+		for(int i=0;i<v.size;i++)
+				for(int j=0;j<v[i].uni.size;j++)
+					if(*stack[0]==v[i].uni[j])
+						v[i].uni[j].nas+=min;
+
+		for(int m=1;m<stack.size;m++)
 		{
 			for(int i=0;i<v.size;i++)
 				for(int j=0;j<v[i].uni.size;j++)
 					if(*stack[m]==v[i].uni[j])
-						v[i].uni[j].nas+=min;
+						if(stack[m]->two->num!=stack[m-1]->two->num)v[i].uni[j].nas+=min;
+						else if(stack[m]->nas-min<0) v[i].uni[j].nas-=min;
+						
 
 		}
 		
+		//чистим стек
 		for(int i=0;i<v.size;i++)
 			if(v[i].sts==color)v[i].sts=neut;
 
@@ -251,4 +298,173 @@ void Ford_Fulkerson(List<vertex>&v,RenderWindow&window)
 
 	}
 
+}*/
+
+#define WHITE 0
+#define GRAY 1
+#define BLACK 2
+#define MAX_NODES 100
+#define oo 10000000
+
+int n;  
+int e; 
+int capacity[MAX_NODES][MAX_NODES]; 
+int flow[MAX_NODES][MAX_NODES];    
+int ColoR[MAX_NODES]; 
+int pred[MAX_NODES];  
+
+int head, tail;
+int q[MAX_NODES + 2];
+
+void enqueue(int x) {
+	q[tail] = x;
+	tail++;
+	ColoR[x] = GRAY;
 }
+
+int dequeue() {
+	int x = q[head];
+	head++;
+	ColoR[x] = BLACK;
+	return x;
+}
+
+int bfs(int start, int target) {
+	int u, v;
+	for (u = 0; u<n; u++) {
+		ColoR[u] = WHITE;
+	}
+	head = tail = 0;
+	enqueue(start);
+	pred[start] = -1;
+	while (head != tail) {
+		u = dequeue();
+		for (v = 0; v<n; v++) {
+			if (ColoR[v] == WHITE && capacity[u][v] - flow[u][v]>0) {
+				enqueue(v);
+				pred[v] = u;
+			}
+		}
+	}
+	return ColoR[target] == BLACK;
+}
+
+int max_flow(int source, int sink) 
+{
+
+	int i, j, u;
+	int max_flow = 0;
+
+	for (i = 0; i<n; i++) {
+		for (j = 0; j<n; j++) {
+			flow[i][j] = 0;
+		}
+	}
+
+	while (bfs(source, sink)) 
+	{
+		int increment = oo;
+
+		for (u = n - 1; pred[u] >= 0; u = pred[u])
+			increment = min(increment, capacity[pred[u]][u] - flow[pred[u]][u]);
+			for (u = n - 1; pred[u] >= 0; u = pred[u])
+			{
+				flow[pred[u]][u] += increment;
+				flow[u][pred[u]] -= increment;
+			}
+			max_flow += increment;
+	}
+
+	return max_flow;
+}
+
+int Ford_Fulkerson(List<vertex>&v,RenderWindow&window)
+{
+
+	int i, j;
+	n=v.size;
+	e=0;
+	for(int i=0;i<v.size;i++) 
+		for(int j=0;j<v[i].uni.size;j++) 
+			if(v[i].num<=v[i].uni[j].one->num&&v[i].num<=v[i].uni[j].two->num)e++;
+
+	for (i = 0; i<n; i++) 
+		for (j = 0; j<n; j++) 
+			capacity[i][j] = 0;
+
+
+	for(int i=0;i<v.size;i++) 
+		for(int j=0;j<v[i].uni.size;j++) 
+			if(v[i].num==v[i].uni[j].one->num)capacity[v[i].uni[j].one->num-1][v[i].uni[j].two->num-1] = v[i].uni[j].wgt;
+			else capacity[v[i].uni[j].two->num-1][v[i].uni[j].one->num-1] = v[i].uni[j].wgt;
+
+
+	int start=retNumber(window),finish=retNumber(window);
+	int res= max_flow(start-1, finish-1) ;
+
+	int aaa=0;
+	for(int i=0;i<v.size;i++) 
+		for(int j=0;j<v[i].uni.size;j++)
+			if(v[i].uni[j].nas<0)aaa+=v[i].uni[j].nas;
+	res+=aaa;
+
+	//system("pause");
+	return res;
+}
+
+class GeomObject
+{
+protected:
+	float originX,originY;
+	float angel;
+	float scale;
+
+public:
+
+	virtual void Draw(){};
+	void deleteImage(){};
+	void Rotate(float angel){};
+	void move(float x,float y){};
+};
+
+class Angel3:public GeomObject
+{
+public:
+	Angel3()
+	{
+		scale=1;
+		originX=10;
+		originY=20;
+	}
+
+	void Draw()
+	{
+		cout<<"Position:";
+		cout<<originX<<", ";
+		cout<<originY<<endl;
+		cout<<"Angel rotate";
+		cout<<angel<<endl;
+		cout<<"Scale:";
+		cout<<scale<<endl;
+	}
+	void Draw(int a)
+	{
+
+	}
+
+	void deleteImage()
+	{
+		cout<<"Delete image"<<endl;
+	}
+
+	void Rotate(float angel)
+	{
+		this->angel=angel;
+	}
+
+	void move(float x,float y)
+	{
+		this->originX=originX;
+		this->originY=originY;
+	}
+};
