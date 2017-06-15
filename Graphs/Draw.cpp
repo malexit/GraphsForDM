@@ -78,10 +78,10 @@ void Line(RenderWindow&window,UNI u,List<vertex>&g)
 
 	itoa(u.wgt,str,10);
 	sstr+=str;
-	sstr+="(";
-	itoa(u.nas,str,10);
-	sstr+=str;
-	sstr+=")";
+//	sstr+="(";
+	//itoa(u.nas,str,10);
+//	sstr+=str;
+//	sstr+=")";
 	txt.setString(sstr);
 	delete[]str;
 
