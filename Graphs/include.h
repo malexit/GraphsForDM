@@ -74,7 +74,7 @@ class vertex
 public:
 	
 	status sts;
-	List<UNI>uni;
+	List<UNI*>uni;
 	int num;
 	int num_l;
 	int x,y;

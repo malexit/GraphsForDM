@@ -28,10 +28,11 @@ bool vertex::operator !=(vertex v)
 void  vertex::createUni(vertex&v,int wgt)
 {
 	uni.resize(uni.size+1);
-	uni[uni.size-1].wgt=wgt;
-	uni[uni.size-1].sts=neut;
-	uni[uni.size-1].one=this;
-	uni[uni.size-1].two=&v;
+	uni[uni.size-1]=new UNI;
+	uni[uni.size-1]->wgt=wgt;
+	uni[uni.size-1]->sts=neut;
+	uni[uni.size-1]->one=this;
+	uni[uni.size-1]->two=&v;
 	v.uni.resize(v.uni.size+1);
 	v.uni[v.uni.size-1]=uni[uni.size-1];
 }

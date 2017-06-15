@@ -22,21 +22,22 @@ void Draw(RenderWindow& window,List<vertex>&g)
 	gs.setOrigin(35,35);
 	f.loadFromFile("Old.ttf");
 	txt.setFont(f);
-	}
 	txt.setCharacterSize(15);
+	}
+	
 
 
 	for(int i=0;i<g.size;i++)
 	{
 		for(int j=0;j<g[i].uni.size;j++)
-		Line(window,g[i].uni[j],g);
+		Line(window,*g[i].uni[j],g);
 	}
-
+		
 		for(int i=0;i<g.size;i++)
 		{
 
+			
 			char*str=new char[5];
-
 			itoa(g[i].num,str,10);
 
 			txt.setString(str);
@@ -116,7 +117,7 @@ void Line(RenderWindow&window,UNI u,List<vertex>&g)
 	t.loadFromImage(img);
 	s.setTexture(t);
 
-	for(float i=xs;i<xb;i+=1)
+	for(float i=xs;i<xb;i+=2)
 	{
 		j=k*i+b;
 		s.setPosition(i,j);
@@ -153,7 +154,7 @@ void Line(RenderWindow&window,UNI u,List<vertex>&g)
 	color=false;
 
 	j;
-	for(float i=ys;i<yb;i+=1)
+	for(float i=ys;i<yb;i+=2)
 	{
 		j=(i-b)/(k*1.0);
 		s.setPosition(j,i);
